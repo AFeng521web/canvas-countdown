@@ -32,6 +32,7 @@
 <button>480x320</button>
 <button>640x420</button>
 <button>800x480</button>
+<button>1600x960</button>
 <canvas id="canvas" width="480" height="320">
     Your browser does not support the canvas element.
 </canvas>
@@ -44,16 +45,17 @@
         [320, 240],
         [480, 320],
         [640, 420],
-        [800, 480]
+        [800, 480],
+        [1600, 960]
     ];
     //canvas分辨率
     var resolutionW = canvas.getAttribute('width');
     var resolutionH = canvas.getAttribute('height');
+    console.log(resolutionW);
+    console.log(resolutionH);
     //canvas大小
     var sizeW = canvas.offsetWidth;
     var sizeH = canvas.offsetHeight;
-    console.log(resolutionW);
-    console.log(resolutionH);
     console.log(sizeW);
     console.log(sizeH);
     var img = new Image();
