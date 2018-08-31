@@ -1,6 +1,39 @@
 ﻿#  基于canvas制作绚丽的倒计时效果
 ## 一、先看下效果
 ![](http://ozes4g3nu.bkt.clouddn.com/20180830-214220_capture.gif)
+## 项目设计：
+### 数字渲染：数字是存储在一个三维数组里面，通过每次传入一个数字，来取出这个数字对应的点阵模型，这个模型是一个二维数组，有圆点的地方值为1，没有圆点的地方值为0。
+
+### 圆心位置确定：就是确定一个数字中任意一个小球的圆心坐标。
+![这里写图片描述](http://ozes4g3nu.bkt.clouddn.com/dianzhen.png)
+
+### 总体实现：
+主要通过一个定时器（setInterval）来不断执行render（渲染函数）和update（更新函数）。
+```
+setInterval(function(){
+        render(context);
+        update();
+    },100)
+```
+render中分别绘制时间和小球，绘制时间其实就是绘制数字，所以专门有一个renderDigit函数，用于把三维数组中对应的数字绘制出来。
+update中通过判断前一个时间和后一个时间是否相等，来生成小球对象，然后添加进一个管理小球的数组中。然后就是更新小球的位置，让小球动起来。
+
+### 算法优化：
+```
+var cnt = 0;
+    for(var j=0; j<balls.length; j++) {
+        if(balls[j].x + RADIUS > 0 && balls[j].x -RADIUS < WINDOW_WIDTH) {
+            //小球还在画布中,则添加到管理小球的这个数组中。
+            balls[cnt++] = balls[j];
+        }
+    }
+
+    //清除已经弹出画布的
+    while( balls.length > Math.min(350,cnt)){
+        balls.pop();
+    }
+```
+控制小球的数量一直在一个范围内，而不是无限的增长。
 
 ## 二、canvas是一个可是使用脚本（通常是javascript）在其中绘制图形的HTML元素，同时canvas也是定义在浏览器上的画布，canvas不仅仅像p标签等是一个元素，更是一个编辑工具，是一套编程接口，它的出现已超过了web基于文本设计的初衷。canvas可以设计出绚丽多彩的动画，奇妙的游戏等，可以使我们的网页绚丽多彩！
 ## 三、canvas绘图环境的搭建
@@ -40,7 +73,11 @@ context.arc(centerx, centery, radius, startingAngle, endingAngle, acticlockwise=
 ```
 其中，第四个和第五个分别指定的是起始圆弧位置和结束圆弧位置。
 最后一个指定是顺时针还是逆时针。默认为false(顺时针)。
-![这里写图片描述](https://img-blog.csdn.net/20180830234347953?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzk3MjcyMw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](http://ozes4g3nu.bkt.clouddn.com/zuobiao.png)
 无论是顺时针还是逆时针，这种位置关系是永远不变的。
 
 还有就是closePath()对fill()是没有用的。使用fill()对首尾相连的路径进行填充。不管有没有调用closePath()，调用fill()会自动封闭路径，并进行填充。
+
+## 项目是学习了慕课网刘宇波老师的<<炫丽的倒计时效果Canvas绘图与动画基础>>。在此特别感谢刘老师的免费视频课程。
+
+## 课程地址：<https://www.imooc.com/learn/133>
