@@ -9,7 +9,7 @@ var MARGIN_TOP = 60;
 var MARGIN_LEFT = 30;
 
 var endTime = new Date();
-endTime.setTime(endTime.getTime() + 3600000);
+endTime.setTime(endTime.getTime() + 3600000*24);
 var curShowTimeSeconds = 0;
 
 var balls = [];
@@ -23,23 +23,24 @@ window.onload = function() {
 
     MARGIN_LEFT = Math.round(WINDOW_WIDTH / 10);
     RADIUS = Math.round(WINDOW_WIDTH * 4 / 5 / 108) - 1;
-    MARGIN_TOP = Math.round(WINDOW_HEIGHT / 10);
+    MARGIN_TOP = Math.round(WINDOW_HEIGHT / 7);
 
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
 
     canvas.width = WINDOW_WIDTH;
     canvas.height = WINDOW_HEIGHT;
-    console.log(WINDOW_HEIGHT);
+
+    //得到现在将要倒计时的秒数，并把全局中的进行更新。
     curShowTimeSeconds = getCurrentShowTimeSeconds();
 
     setInterval(function(){
         render(context);
         update();
-    },50)
+    },100)
 };
 
-//得到现在的时间秒数
+//得到现在将要倒计时的秒数
 function getCurrentShowTimeSeconds() {
     var curTime = new Date();
     var ret = endTime.getTime() - curTime.getTime();
@@ -62,6 +63,7 @@ function update() {
 
     if( nextSeconds != curSeconds ){
         if( parseInt(curHours/10) != parseInt(nextHours/10) ){
+            //后一个时刻与前一个时刻的值不一样了，那么要用前一个时刻的值生成随机的小球。
             addBalls( MARGIN_LEFT, MARGIN_TOP , parseInt(curHours/10) );
         }
         if( parseInt(curHours%10) != parseInt(nextHours%10) ){
@@ -86,9 +88,10 @@ function update() {
     }
 
     updateBalls();
+    console.log(balls.length);
 }
 
-//更新小球
+//更新小球，小球生成了，但是要动起来，就要不断改变位置。
 function updateBalls() {
     for(var i=0; i<balls.length; i++) {
         balls[i].x += balls[i].vx;
@@ -105,19 +108,19 @@ function updateBalls() {
     //优化算法，使得小球的数量控制在一个范围内，而不是无限的增长。
     var cnt = 0;
     for(var j=0; j<balls.length; j++) {
-        if(balls[i].x + RADIUS > 0 && balls[i].x -RADIUS < WINDOW_WIDTH) {
+        if(balls[j].x + RADIUS > 0 && balls[j].x -RADIUS < WINDOW_WIDTH) {
             //小球还在画布中,则添加到管理小球的这个数组中。
-            balls[cnt++] = balls[i];
+            balls[cnt++] = balls[j];
         }
     }
 
     //清除已经弹出画布的
-    while( balls.length > cnt ){
+    while( balls.length > Math.min(350,cnt)){
         balls.pop();
     }
 }
 
-//添加小球的函数
+//添加小球的函数,把点阵中每个为1的位置生成一个小球。
 function addBalls(x, y, num) {
     for(var i=0; i<digit[num].length; i++) {
         for(var j=0; j<digit[num][i].length; j++) {
@@ -135,6 +138,8 @@ function addBalls(x, y, num) {
         }
     }
 }
+
+
 
 //渲染函数
 function render(cxt) {
